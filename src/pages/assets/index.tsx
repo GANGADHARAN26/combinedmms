@@ -1,24 +1,26 @@
-import { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { PlusIcon, FunnelIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useAuth } from '@/contexts/AuthContext';
-import { Asset, AssetResponse } from '@/types/asset';
-import { assetService } from '@/services/assetService';
-import { useNotificationStore } from '@/stores/notificationStore';
-import LoadingScreen from '@/components/ui/LoadingScreen';
-import Pagination from '@/components/ui/Pagination';
-import AssetStatusBadge from '@/components/assets/AssetStatusBadge';
-import AssetFilterPanel from '@/components/assets/AssetFilterPanel';
-import Modal from '@/components/ui/Modal';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { PlusIcon, FunnelIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "@/contexts/AuthContext";
+import { Asset, AssetResponse } from "@/types/asset";
+import { assetService } from "@/services/assetService";
+import { useNotificationStore } from "@/stores/notificationStore";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import Pagination from "@/components/ui/Pagination";
+import AssetStatusBadge from "@/components/assets/AssetStatusBadge";
+import AssetFilterPanel from "@/components/assets/AssetFilterPanel";
+import Modal from "@/components/ui/Modal";
+import toast from "react-hot-toast";
 
 const AssetsPage = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const addNotification = useNotificationStore((state) => state.addNotification);
-  
+  const addNotification = useNotificationStore(
+    (state) => state.addNotification
+  );
+
   // State for assets list and pagination
   const [assets, setAssets] = useState<Asset[]>([]);
   const [page, setPage] = useState(1);
@@ -26,17 +28,17 @@ const AssetsPage = () => {
   const [totalAssets, setTotalAssets] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // State for sorting and filtering
   const [filters, setFilters] = useState({
-    base: user?.role === 'BaseCommander' ? user.assignedBase : '',
-    type: '',
-    search: '',
+    base: user?.role === "BaseCommander" ? user.assignedBase : "",
+    type: "",
+    search: "",
   });
-  const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // State for delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState<Asset | null>(null);
@@ -50,22 +52,21 @@ const AssetsPage = () => {
         sortBy,
         sortOrder,
         limit,
-        skip: (page - 1) * limit
+        skip: (page - 1) * limit,
       };
-      
+
       // Add filters to params if they exist
       if (filters.base) params.base = filters.base;
       if (filters.type) params.type = filters.type;
       if (filters.search) params.name = filters.search;
-      
+
       const response = await assetService.getAssets(params);
       setAssets(response.assets);
       setTotalAssets(response.total);
       setHasMore(response.hasMore);
-      
     } catch (error) {
-      console.error('Error fetching assets:', error);
-      toast.error('Failed to load assets');
+      console.error("Error fetching assets:", error);
+      toast.error("Failed to load assets");
     } finally {
       setIsLoading(false);
     }
@@ -79,10 +80,10 @@ const AssetsPage = () => {
   // Handle sorting
   const handleSort = (field: string) => {
     if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortBy(field);
-      setSortOrder('asc');
+      setSortOrder("asc");
     }
   };
 
@@ -110,28 +111,27 @@ const AssetsPage = () => {
 
   const handleDeleteAsset = async () => {
     if (!assetToDelete) return;
-    
+
     setIsDeleting(true);
     try {
       await assetService.deleteAsset(assetToDelete._id);
-      
+
       // Add notification
       addNotification({
-        type: 'success',
-        title: 'Asset Deleted',
-        message: `Asset ${assetToDelete.name} has been deleted successfully.`
+        type: "success",
+        title: "Asset Deleted",
+        message: `Asset ${assetToDelete.name} has been deleted successfully.`,
       });
-      
-      toast.success('Asset deleted successfully');
-      
+
+      toast.success("Asset deleted successfully");
+
       // Close modal and refresh asset list
       setShowDeleteModal(false);
       setAssetToDelete(null);
       fetchAssets();
-      
     } catch (error) {
-      console.error('Error deleting asset:', error);
-      toast.error('Failed to delete asset');
+      console.error("Error deleting asset:", error);
+      toast.error("Failed to delete asset");
     } finally {
       setIsDeleting(false);
     }
@@ -158,7 +158,8 @@ const AssetsPage = () => {
                 <FunnelIcon className="h-5 w-5 mr-2" />
                 Filters
               </button>
-              {(user?.role === 'Admin' || user?.role === 'LogisticsOfficer') && (
+              {(user?.role === "Admin" ||
+                user?.role === "LogisticsOfficer") && (
                 <Link href="/assets/new" className="btn btn-primary">
                   <PlusIcon className="h-5 w-5 mr-2" />
                   Add Asset
@@ -170,7 +171,11 @@ const AssetsPage = () => {
           {/* Filters Panel */}
           {showFilters && (
             <AssetFilterPanel
-              filters={filters}
+              filters={{
+                base: filters.base ?? "",
+                type: filters.type,
+                search: filters.search,
+              }}
               onFilterChange={handleFilterChange}
               onClose={() => setShowFilters(false)}
             />
@@ -183,17 +188,22 @@ const AssetsPage = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
               </div>
             )}
-            
+
             {!isLoading && assets.length === 0 && (
               <div className="text-center py-8 text-gray-500">
-                No assets found. {(user?.role === 'Admin' || user?.role === 'LogisticsOfficer') && (
-                  <Link href="/assets/new" className="text-primary-600 hover:text-primary-900">
+                No assets found.{" "}
+                {(user?.role === "Admin" ||
+                  user?.role === "LogisticsOfficer") && (
+                  <Link
+                    href="/assets/new"
+                    className="text-primary-600 hover:text-primary-900"
+                  >
                     Add a new asset
                   </Link>
                 )}
               </div>
             )}
-            
+
             {!isLoading && assets.length > 0 && (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -202,51 +212,61 @@ const AssetsPage = () => {
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('name')}
+                        onClick={() => handleSort("name")}
                       >
                         Name
-                        {sortBy === 'name' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "name" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('type')}
+                        onClick={() => handleSort("type")}
                       >
                         Type
-                        {sortBy === 'type' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "type" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('base')}
+                        onClick={() => handleSort("base")}
                       >
                         Base
-                        {sortBy === 'base' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "base" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('available')}
+                        onClick={() => handleSort("available")}
                       >
                         Available
-                        {sortBy === 'available' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "available" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('assigned')}
+                        onClick={() => handleSort("assigned")}
                       >
                         Assigned
-                        {sortBy === 'assigned' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "assigned" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
@@ -287,7 +307,10 @@ const AssetsPage = () => {
                           {asset.assigned}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <AssetStatusBadge available={asset.available} total={asset.closingBalance} />
+                          <AssetStatusBadge
+                            available={asset.available}
+                            total={asset.closingBalance}
+                          />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <Link
@@ -296,7 +319,8 @@ const AssetsPage = () => {
                           >
                             View
                           </Link>
-                          {(user?.role === 'Admin' || user?.role === 'LogisticsOfficer') && (
+                          {(user?.role === "Admin" ||
+                            user?.role === "LogisticsOfficer") && (
                             <>
                               <Link
                                 href={`/assets/${asset._id}/edit`}
@@ -304,7 +328,7 @@ const AssetsPage = () => {
                               >
                                 Edit
                               </Link>
-                              {user?.role === 'Admin' && (
+                              {user?.role === "Admin" && (
                                 <button
                                   onClick={() => openDeleteModal(asset)}
                                   className="text-red-600 hover:text-red-900"
@@ -348,10 +372,11 @@ const AssetsPage = () => {
       >
         <div className="py-4">
           <p className="text-gray-700">
-            Are you sure you want to delete <span className="font-semibold">{assetToDelete?.name}</span>?
-            This action cannot be undone.
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">{assetToDelete?.name}</span>? This
+            action cannot be undone.
           </p>
-          
+
           <div className="mt-6 flex justify-end space-x-3">
             <button
               type="button"
@@ -372,14 +397,30 @@ const AssetsPage = () => {
             >
               {isDeleting ? (
                 <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Deleting...
                 </span>
               ) : (
-                'Delete Asset'
+                "Delete Asset"
               )}
             </button>
           </div>
