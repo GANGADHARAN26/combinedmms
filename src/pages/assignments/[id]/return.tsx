@@ -8,7 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import toast from 'react-hot-toast';
 import { Assignment } from '@/types/assignment';
-
+import Link from 'next/link';
+import { format } from 'date-fns';
 // Mock data for assignments
 const mockAssignments: { [key: string]: Assignment } = {
   '1': {
