@@ -1,23 +1,25 @@
-import { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { format } from 'date-fns';
-import { PlusIcon, FunnelIcon } from '@heroicons/react/24/outline';
-import { useAuth } from '@/contexts/AuthContext';
-import { assignmentService } from '@/services/assignmentService';
-import { useNotificationStore } from '@/stores/notificationStore';
-import LoadingScreen from '@/components/ui/LoadingScreen';
-import Pagination from '@/components/ui/Pagination';
-import Modal from '@/components/ui/Modal';
-import { Assignment } from '@/types/assignment';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { format } from "date-fns";
+import { PlusIcon, FunnelIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "@/contexts/AuthContext";
+import { assignmentService } from "@/services/assignmentService";
+import { useNotificationStore } from "@/stores/notificationStore";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import Pagination from "@/components/ui/Pagination";
+import Modal from "@/components/ui/Modal";
+import { Assignment } from "@/types/assignment";
+import toast from "react-hot-toast";
 
 const AssignmentsPage = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const addNotification = useNotificationStore((state) => state.addNotification);
-  
+  const addNotification = useNotificationStore(
+    (state) => state.addNotification
+  );
+
   // State for assignments list and pagination
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [page, setPage] = useState(1);
@@ -25,27 +27,28 @@ const AssignmentsPage = () => {
   const [totalAssignments, setTotalAssignments] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // State for sorting and filtering
   const [filters, setFilters] = useState({
-    base: user?.role === 'BaseCommander' ? user.assignedBase : '',
-    assetType: '',
-    status: '',
-    startDate: '',
-    endDate: '',
-    search: '',
+    base: user?.role === "BaseCommander" ? user.assignedBase : "",
+    assetType: "",
+    status: "",
+    startDate: "",
+    endDate: "",
+    search: "",
   });
-  const [sortBy, setSortBy] = useState('startDate');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [sortBy, setSortBy] = useState("startDate");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // State for action modals
-  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<Assignment | null>(null);
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [returnQuantity, setReturnQuantity] = useState(0);
-  const [statusNotes, setStatusNotes] = useState('');
-  const [newStatus, setNewStatus] = useState('');
+  const [statusNotes, setStatusNotes] = useState("");
+  const [newStatus, setNewStatus] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Fetch assignments from API
@@ -56,9 +59,9 @@ const AssignmentsPage = () => {
         sortBy,
         sortOrder,
         limit,
-        skip: (page - 1) * limit
+        skip: (page - 1) * limit,
       };
-      
+
       // Add filters to params if they exist
       if (filters.base) params.base = filters.base;
       if (filters.assetType) params.assetType = filters.assetType;
@@ -66,15 +69,14 @@ const AssignmentsPage = () => {
       if (filters.startDate) params.startDate = filters.startDate;
       if (filters.endDate) params.endDate = filters.endDate;
       if (filters.search) params.search = filters.search;
-      
+
       const response = await assignmentService.getAssignments(params);
       setAssignments(response.assignments);
       setTotalAssignments(response.total);
       setHasMore(response.hasMore);
-      
     } catch (error) {
-      console.error('Error fetching assignments:', error);
-      toast.error('Failed to load assignments');
+      console.error("Error fetching assignments:", error);
+      toast.error("Failed to load assignments");
     } finally {
       setIsLoading(false);
     }
@@ -84,31 +86,34 @@ const AssignmentsPage = () => {
   useEffect(() => {
     fetchAssignments();
   }, [filters, sortBy, sortOrder, page, limit, user]);
-  
+
   // Add click outside handler to close dropdowns
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const dropdowns = document.querySelectorAll('[id^="status-dropdown-"]');
-      dropdowns.forEach(dropdown => {
-        if (dropdown instanceof HTMLElement && !dropdown.contains(event.target as Node)) {
-          dropdown.classList.add('hidden');
+      dropdowns.forEach((dropdown) => {
+        if (
+          dropdown instanceof HTMLElement &&
+          !dropdown.contains(event.target as Node)
+        ) {
+          dropdown.classList.add("hidden");
         }
       });
     };
-    
-    document.addEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   // Handle sorting
   const handleSort = (field: string) => {
     if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortBy(field);
-      setSortOrder('desc');
+      setSortOrder("desc");
     }
   };
 
@@ -137,34 +142,33 @@ const AssignmentsPage = () => {
 
   const handleReturnAssignment = async () => {
     if (!selectedAssignment) return;
-    
+
     setIsProcessing(true);
     try {
       const updatedAssignment = await assignmentService.returnAssignment(
-        selectedAssignment._id, 
-        { 
+        selectedAssignment._id,
+        {
           returnedQuantity: returnQuantity,
-          notes: statusNotes || undefined
+          notes: statusNotes || undefined,
         }
       );
-      
+
       // Add notification
       addNotification({
-        type: 'success',
-        title: 'Assignment Returned',
-        message: `${returnQuantity} ${updatedAssignment.assetName} returned successfully.`
+        type: "success",
+        title: "Assignment Returned",
+        message: `${returnQuantity} ${updatedAssignment.assetName} returned successfully.`,
       });
-      
-      toast.success('Assignment returned successfully');
-      
+
+      toast.success("Assignment returned successfully");
+
       // Close modal and refresh assignment list
       setShowReturnModal(false);
       setSelectedAssignment(null);
       fetchAssignments();
-      
     } catch (error) {
-      console.error('Error returning assignment:', error);
-      toast.error('Failed to return assignment');
+      console.error("Error returning assignment:", error);
+      toast.error("Failed to return assignment");
     } finally {
       setIsProcessing(false);
     }
@@ -174,40 +178,39 @@ const AssignmentsPage = () => {
   const openStatusModal = (assignment: Assignment, status: string) => {
     setSelectedAssignment(assignment);
     setNewStatus(status);
-    setStatusNotes('');
+    setStatusNotes("");
     setShowStatusModal(true);
   };
 
   const handleUpdateStatus = async () => {
     if (!selectedAssignment || !newStatus) return;
-    
+
     setIsProcessing(true);
     try {
       const updatedAssignment = await assignmentService.updateAssignmentStatus(
-        selectedAssignment._id, 
-        { 
+        selectedAssignment._id,
+        {
           status: newStatus,
-          notes: statusNotes || undefined
+          notes: statusNotes || undefined,
         }
       );
-      
+
       // Add notification
       addNotification({
-        type: 'success',
-        title: 'Assignment Updated',
-        message: `Assignment status changed to ${newStatus}.`
+        type: "success",
+        title: "Assignment Updated",
+        message: `Assignment status changed to ${newStatus}.`,
       });
-      
+
       toast.success(`Assignment marked as ${newStatus}`);
-      
+
       // Close modal and refresh assignment list
       setShowStatusModal(false);
       setSelectedAssignment(null);
       fetchAssignments();
-      
     } catch (error) {
-      console.error('Error updating assignment status:', error);
-      toast.error('Failed to update assignment status');
+      console.error("Error updating assignment status:", error);
+      toast.error("Failed to update assignment status");
     } finally {
       setIsProcessing(false);
     }
@@ -216,38 +219,42 @@ const AssignmentsPage = () => {
   // Helper function for status badge styling
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'Active':
-        return 'bg-green-100 text-green-800';
-      case 'Returned':
-        return 'bg-blue-100 text-blue-800';
-      case 'Lost':
-        return 'bg-red-100 text-red-800';
-      case 'Damaged':
-        return 'bg-orange-100 text-orange-800';
+      case "Active":
+        return "bg-green-100 text-green-800";
+      case "Returned":
+        return "bg-blue-100 text-blue-800";
+      case "Lost":
+        return "bg-red-100 text-red-800";
+      case "Damaged":
+        return "bg-orange-100 text-orange-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   // Check if user can create assignments
-  const canCreateAssignment = user?.role === 'Admin' || 
-    user?.role === 'BaseCommander';
-  
+  const canCreateAssignment =
+    user?.role === "Admin" || user?.role === "BaseCommander";
+
   // Check if user can return assignments
   const canReturnAssignment = (assignment: Assignment) => {
-    if (assignment.status !== 'Active') return false;
-    
-    return user?.role === 'Admin' || 
-      (user?.role === 'LogisticsOfficer') ||
-      (user?.role === 'BaseCommander' && user.assignedBase === assignment.base);
+    if (assignment.status !== "Active") return false;
+
+    return (
+      user?.role === "Admin" ||
+      user?.role === "LogisticsOfficer" ||
+      (user?.role === "BaseCommander" && user.assignedBase === assignment.base)
+    );
   };
-  
+
   // Check if user can update assignment status
   const canUpdateStatus = (assignment: Assignment) => {
-    if (assignment.status !== 'Active') return false;
-    
-    return user?.role === 'Admin' || 
-      (user?.role === 'BaseCommander' && user.assignedBase === assignment.base);
+    if (assignment.status !== "Active") return false;
+
+    return (
+      user?.role === "Admin" ||
+      (user?.role === "BaseCommander" && user.assignedBase === assignment.base)
+    );
   };
 
   if (isLoading && assignments.length === 0) return <LoadingScreen />;
@@ -261,7 +268,9 @@ const AssignmentsPage = () => {
       <div className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold text-gray-900">Assignments</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Assignments
+            </h1>
             <div className="flex space-x-3">
               <button
                 type="button"
@@ -285,7 +294,10 @@ const AssignmentsPage = () => {
             <div className="mt-4 bg-white p-4 shadow rounded-md">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label htmlFor="base" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="base"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Base
                   </label>
                   <select
@@ -293,8 +305,10 @@ const AssignmentsPage = () => {
                     name="base"
                     className="mt-1 form-select"
                     value={filters.base}
-                    onChange={(e) => handleFilterChange({ ...filters, base: e.target.value })}
-                    disabled={user?.role === 'BaseCommander'}
+                    onChange={(e) =>
+                      handleFilterChange({ ...filters, base: e.target.value })
+                    }
+                    disabled={user?.role === "BaseCommander"}
                   >
                     <option value="">All Bases</option>
                     <option value="Base Alpha">Base Alpha</option>
@@ -303,7 +317,10 @@ const AssignmentsPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="assetType" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="assetType"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Asset Type
                   </label>
                   <select
@@ -311,7 +328,12 @@ const AssignmentsPage = () => {
                     name="assetType"
                     className="mt-1 form-select"
                     value={filters.assetType}
-                    onChange={(e) => handleFilterChange({ ...filters, assetType: e.target.value })}
+                    onChange={(e) =>
+                      handleFilterChange({
+                        ...filters,
+                        assetType: e.target.value,
+                      })
+                    }
                   >
                     <option value="">All Types</option>
                     <option value="Weapon">Weapon</option>
@@ -321,7 +343,10 @@ const AssignmentsPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="status"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Status
                   </label>
                   <select
@@ -329,7 +354,9 @@ const AssignmentsPage = () => {
                     name="status"
                     className="mt-1 form-select"
                     value={filters.status}
-                    onChange={(e) => handleFilterChange({ ...filters, status: e.target.value })}
+                    onChange={(e) =>
+                      handleFilterChange({ ...filters, status: e.target.value })
+                    }
                   >
                     <option value="">All Statuses</option>
                     <option value="Active">Active</option>
@@ -339,7 +366,10 @@ const AssignmentsPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="startDate"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Start Date
                   </label>
                   <input
@@ -348,11 +378,19 @@ const AssignmentsPage = () => {
                     name="startDate"
                     className="mt-1 form-input"
                     value={filters.startDate}
-                    onChange={(e) => handleFilterChange({ ...filters, startDate: e.target.value })}
+                    onChange={(e) =>
+                      handleFilterChange({
+                        ...filters,
+                        startDate: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
-                  <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="endDate"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     End Date
                   </label>
                   <input
@@ -361,11 +399,19 @@ const AssignmentsPage = () => {
                     name="endDate"
                     className="mt-1 form-input"
                     value={filters.endDate}
-                    onChange={(e) => handleFilterChange({ ...filters, endDate: e.target.value })}
+                    onChange={(e) =>
+                      handleFilterChange({
+                        ...filters,
+                        endDate: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
-                  <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="search"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Search
                   </label>
                   <input
@@ -375,7 +421,9 @@ const AssignmentsPage = () => {
                     className="mt-1 form-input"
                     placeholder="Search by asset name, personnel, or purpose"
                     value={filters.search}
-                    onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })}
+                    onChange={(e) =>
+                      handleFilterChange({ ...filters, search: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -385,12 +433,13 @@ const AssignmentsPage = () => {
                   className="btn btn-secondary mr-2"
                   onClick={() => {
                     setFilters({
-                      base: user?.role === 'BaseCommander' ? user.assignedBase : '',
-                      assetType: '',
-                      status: '',
-                      startDate: '',
-                      endDate: '',
-                      search: '',
+                      base:
+                        user?.role === "BaseCommander" ? user.assignedBase : "",
+                      assetType: "",
+                      status: "",
+                      startDate: "",
+                      endDate: "",
+                      search: "",
                     });
                   }}
                 >
@@ -414,17 +463,21 @@ const AssignmentsPage = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
               </div>
             )}
-            
+
             {!isLoading && assignments.length === 0 && (
               <div className="text-center py-8 text-gray-500">
-                No assignments found. {canCreateAssignment && (
-                  <Link href="/assignments/new" className="text-primary-600 hover:text-primary-900">
+                No assignments found.{" "}
+                {canCreateAssignment && (
+                  <Link
+                    href="/assignments/new"
+                    className="text-primary-600 hover:text-primary-900"
+                  >
                     Create a new assignment
                   </Link>
                 )}
               </div>
             )}
-            
+
             {!isLoading && assignments.length > 0 && (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -433,71 +486,85 @@ const AssignmentsPage = () => {
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('assetName')}
+                        onClick={() => handleSort("assetName")}
                       >
                         Asset
-                        {sortBy === 'assetName' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "assetName" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('base')}
+                        onClick={() => handleSort("base")}
                       >
                         Base
-                        {sortBy === 'base' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "base" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('assignedTo.name')}
+                        onClick={() => handleSort("assignedTo.name")}
                       >
                         Assigned To
-                        {sortBy === 'assignedTo.name' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "assignedTo.name" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('quantity')}
+                        onClick={() => handleSort("quantity")}
                       >
                         Quantity
-                        {sortBy === 'quantity' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "quantity" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('purpose')}
+                        onClick={() => handleSort("purpose")}
                       >
                         Purpose
-                        {sortBy === 'purpose' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "purpose" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('status')}
+                        onClick={() => handleSort("status")}
                       >
                         Status
-                        {sortBy === 'status' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "status" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('startDate')}
+                        onClick={() => handleSort("startDate")}
                       >
                         Start Date
-                        {sortBy === 'startDate' && (
-                          <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                        {sortBy === "startDate" && (
+                          <span className="ml-1">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
                       </th>
                       <th
@@ -518,7 +585,9 @@ const AssignmentsPage = () => {
                           >
                             {assignment.assetName}
                           </Link>
-                          <p className="text-xs text-gray-500">{assignment.assetType}</p>
+                          <p className="text-xs text-gray-500">
+                            {assignment.assetType}
+                          </p>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {assignment.base}
@@ -526,7 +595,10 @@ const AssignmentsPage = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           <div>
                             {assignment.assignedTo.name}
-                            <p className="text-xs text-gray-500">{assignment.assignedTo.rank} ({assignment.assignedTo.id})</p>
+                            <p className="text-xs text-gray-500">
+                              {assignment.assignedTo.rank} (
+                              {assignment.assignedTo.id})
+                            </p>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -550,10 +622,17 @@ const AssignmentsPage = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {format(new Date(assignment.startDate), 'MMM d, yyyy')}
+                          {format(
+                            new Date(assignment.startDate),
+                            "MMM d, yyyy"
+                          )}
                           {assignment.endDate && (
                             <p className="text-xs text-gray-500">
-                              to {format(new Date(assignment.endDate), 'MMM d, yyyy')}
+                              to{" "}
+                              {format(
+                                new Date(assignment.endDate),
+                                "MMM d, yyyy"
+                              )}
                             </p>
                           )}
                         </td>
@@ -577,27 +656,33 @@ const AssignmentsPage = () => {
                               <button
                                 className="text-orange-600 hover:text-orange-900"
                                 onClick={() => {
-                                  const dropdown = document.getElementById(`status-dropdown-${assignment._id}`);
+                                  const dropdown = document.getElementById(
+                                    `status-dropdown-${assignment._id}`
+                                  );
                                   if (dropdown) {
-                                    dropdown.classList.toggle('hidden');
+                                    dropdown.classList.toggle("hidden");
                                   }
                                 }}
                               >
                                 Status ▾
                               </button>
-                              <div 
+                              <div
                                 id={`status-dropdown-${assignment._id}`}
                                 className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden"
                               >
                                 <button
                                   className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
-                                  onClick={() => openStatusModal(assignment, 'Lost')}
+                                  onClick={() =>
+                                    openStatusModal(assignment, "Lost")
+                                  }
                                 >
                                   Mark as Lost
                                 </button>
                                 <button
                                   className="block px-4 py-2 text-sm text-orange-600 hover:bg-gray-100 w-full text-left"
-                                  onClick={() => openStatusModal(assignment, 'Damaged')}
+                                  onClick={() =>
+                                    openStatusModal(assignment, "Damaged")
+                                  }
                                 >
                                   Mark as Damaged
                                 </button>
@@ -642,11 +727,15 @@ const AssignmentsPage = () => {
           {selectedAssignment && (
             <>
               <p className="text-gray-700 mb-4">
-                Return {selectedAssignment.assetName} assigned to {selectedAssignment.assignedTo.name}
+                Return {selectedAssignment.assetName} assigned to{" "}
+                {selectedAssignment.assignedTo.name}
               </p>
-              
+
               <div className="mb-4">
-                <label htmlFor="returnQuantity" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="returnQuantity"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Quantity to Return
                 </label>
                 <input
@@ -654,17 +743,25 @@ const AssignmentsPage = () => {
                   id="returnQuantity"
                   className="mt-1 form-input"
                   min="1"
-                  max={selectedAssignment.quantity - selectedAssignment.returnedQuantity}
+                  max={
+                    selectedAssignment.quantity -
+                    selectedAssignment.returnedQuantity
+                  }
                   value={returnQuantity}
                   onChange={(e) => setReturnQuantity(parseInt(e.target.value))}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {selectedAssignment.quantity - selectedAssignment.returnedQuantity} available to return
+                  {selectedAssignment.quantity -
+                    selectedAssignment.returnedQuantity}{" "}
+                  available to return
                 </p>
               </div>
-              
+
               <div className="mb-4">
-                <label htmlFor="statusNotes" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="statusNotes"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Notes (Optional)
                 </label>
                 <textarea
@@ -678,7 +775,7 @@ const AssignmentsPage = () => {
               </div>
             </>
           )}
-          
+
           <div className="mt-6 flex justify-end space-x-3">
             <button
               type="button"
@@ -695,18 +792,41 @@ const AssignmentsPage = () => {
               type="button"
               className="btn btn-primary"
               onClick={handleReturnAssignment}
-              disabled={isProcessing || returnQuantity < 1 || (selectedAssignment && returnQuantity > (selectedAssignment.quantity - selectedAssignment.returnedQuantity))}
+              disabled={
+                isProcessing ||
+                returnQuantity < 1 ||
+                (selectedAssignment != null &&
+                  returnQuantity >
+                    selectedAssignment.quantity -
+                      selectedAssignment.returnedQuantity)
+              }
             >
               {isProcessing ? (
                 <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Processing...
                 </span>
               ) : (
-                'Return Items'
+                "Return Items"
               )}
             </button>
           </div>
@@ -727,11 +847,22 @@ const AssignmentsPage = () => {
           {selectedAssignment && (
             <>
               <p className="text-gray-700 mb-4">
-                Are you sure you want to mark the assignment of <span className="font-semibold">{selectedAssignment.quantity} {selectedAssignment.assetName}</span> to <span className="font-semibold">{selectedAssignment.assignedTo.name}</span> as <span className="font-semibold">{newStatus}</span>?
+                Are you sure you want to mark the assignment of{" "}
+                <span className="font-semibold">
+                  {selectedAssignment.quantity} {selectedAssignment.assetName}
+                </span>{" "}
+                to{" "}
+                <span className="font-semibold">
+                  {selectedAssignment.assignedTo.name}
+                </span>{" "}
+                as <span className="font-semibold">{newStatus}</span>?
               </p>
-              
+
               <div className="mb-4">
-                <label htmlFor="statusNotes" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="statusNotes"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Notes (Required)
                 </label>
                 <textarea
@@ -745,7 +876,7 @@ const AssignmentsPage = () => {
               </div>
             </>
           )}
-          
+
           <div className="mt-6 flex justify-end space-x-3">
             <button
               type="button"
@@ -766,9 +897,25 @@ const AssignmentsPage = () => {
             >
               {isProcessing ? (
                 <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Processing...
                 </span>
