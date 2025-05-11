@@ -31,15 +31,15 @@ const AssetFilterPanel = ({ filters, onFilterChange, onClose }: AssetFilterPanel
     onFilterChange(localFilters);
   };
 
-  const handleReset = () => {
-    const resetFilters = {
-      base: user?.role === 'BaseCommander' ? user.assignedBase : '',
-      type: '',
-      search: '',
-    };
-    setLocalFilters(resetFilters);
-    onFilterChange(resetFilters);
+const handleReset = () => {
+  const resetFilters = {
+    base: user?.role === 'BaseCommander' ? user.assignedBase ?? '' : '',
+    type: '',
+    search: '',
   };
+  setLocalFilters(resetFilters);
+  onFilterChange(resetFilters);
+};
 
   return (
     <div className="mt-4 bg-white shadow rounded-lg p-4 mb-6">

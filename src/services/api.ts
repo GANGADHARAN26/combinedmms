@@ -62,7 +62,8 @@ api.interceptors.response.use(
           break;
         default:
           // Other errors
-          const errorMessage = response.data?.error || response.data?.message || 'An error occurred';
+         const errorMessage = (response.data as any).error || (response.data as any).message || 'An error occurred';
+
           toast.error(errorMessage);
       }
     } else {
