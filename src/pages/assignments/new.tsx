@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -11,6 +11,23 @@ import { useNotificationStore } from '@/stores/notificationStore';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import toast from 'react-hot-toast';
 import { Asset } from '@/types/asset';
+import { Assignment } from '@/types/assignment';
+
+// Interface for the form values
+interface AssignmentFormValues {
+  asset: string;
+  base: string;
+  quantity: number;
+  assignedTo: {
+    name: string;
+    rank: string;
+    id: string;
+  };
+  purpose: string;
+  startDate: string;
+  endDate?: string;
+  notes?: string;
+}
 
 // List of bases
 const bases = ['Base Alpha', 'Base Bravo', 'Base Charlie'];
@@ -33,7 +50,7 @@ const AssignmentSchema = Yup.object().shape({
   notes: Yup.string(),
 });
 
-const NewAssignmentPage = () => {
+const NewAssignmentPage: React.FC = () => {
   const router = useRouter();
   const { user } = useAuth();
   const addNotification = useNotificationStore((state) => state.addNotification);
@@ -71,7 +88,7 @@ const NewAssignmentPage = () => {
         setAvailableAssets(filteredAssets);
         
         // If assetId is provided in the query, select that asset
-        if (assetId) {
+        if (assetId && typeof assetId === 'string') {
           const asset = filteredAssets.find(a => a._id === assetId);
           if (asset) {
             setSelectedAsset(asset);
@@ -91,9 +108,9 @@ const NewAssignmentPage = () => {
     if (user) {
       fetchAssets();
     }
-  }, [assetId, user]);
+  }, [assetId, user, formik]);
 
-  const formik = useFormik({
+  const formik = useFormik<AssignmentFormValues>({
     initialValues: {
       asset: assetId || '',
       base: user?.role === 'BaseCommander' && user.assignedBase ? user.assignedBase : '',
@@ -197,7 +214,7 @@ const NewAssignmentPage = () => {
                         <option value="">Select an asset</option>
                         {availableAssets.map((asset) => (
                           <option key={asset._id} value={asset._id}>
-                            {asset.name} ({asset.type}) - {asset.availableQuantity} available
+                            {asset.name} ({asset.type}) - {asset.available} available
                           </option>
                         ))}
                       </select>
@@ -248,7 +265,7 @@ const NewAssignmentPage = () => {
                         name="quantity"
                         id="quantity"
                         min="1"
-                        max={selectedAsset?.availableQuantity || 1}
+                        max={selectedAsset?.available || 1}
                         className={`form-input ${
                           formik.touched.quantity && formik.errors.quantity ? 'border-red-500' : ''
                         }`}
@@ -258,7 +275,7 @@ const NewAssignmentPage = () => {
                       />
                       {selectedAsset && (
                         <p className="mt-1 text-xs text-gray-500">
-                          {selectedAsset.availableQuantity} available
+                          {selectedAsset.available} available
                         </p>
                       )}
                       {formik.touched.quantity && formik.errors.quantity && (

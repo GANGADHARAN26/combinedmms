@@ -33,7 +33,6 @@ const Sidebar = () => {
     { name: 'Purchases', href: '/purchases', icon: ShoppingCartIcon, roles: ['Admin', 'BaseCommander', 'LogisticsOfficer'] },
     { name: 'Assignments', href: '/assignments', icon: UserGroupIcon, roles: ['Admin', 'BaseCommander'] },
     { name: 'Expenditures', href: '/expenditures', icon: ArchiveBoxIcon, roles: ['Admin', 'BaseCommander'] },
-    { name: 'Activity Logs', href: '/activity-logs', icon: ClockIcon, roles: ['Admin'] },
     { name: 'Users', href: '/users', icon: UsersIcon, roles: ['Admin'] },
     { name: 'Settings', href: '/settings', icon: Cog6ToothIcon, roles: ['Admin'] },
   ];
