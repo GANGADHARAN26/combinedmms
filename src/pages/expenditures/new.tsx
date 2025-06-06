@@ -28,7 +28,10 @@ const ExpenditureSchema = Yup.object().shape({
     .required('Quantity is required')
     .positive('Quantity must be positive')
     .integer('Quantity must be a whole number'),
-  reason: Yup.string().required('Reason is required'),
+  reason: Yup.mixed<"Training" | "Operation" | "Maintenance" | "Damaged" | "Lost" | "Other">()
+  .oneOf(["Training", "Operation", "Maintenance", "Damaged", "Lost", "Other"])
+  .required("Reason is required"),
+
   expendedBy: Yup.object().shape({
     name: Yup.string().required('Name is required'),
     rank: Yup.string().required('Rank is required'),

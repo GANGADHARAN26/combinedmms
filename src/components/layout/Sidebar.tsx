@@ -29,6 +29,7 @@ const Sidebar = () => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['Admin'] },
     { name: 'Assets', href: '/assets', icon: CubeIcon, roles: ['Admin', 'BaseCommander', 'LogisticsOfficer'] },
+    { name: 'Activity Logs', href: '/activity-logs', icon: CubeIcon, roles: ['Admin'] },
     { name: 'Transfers', href: '/transfers', icon: TruckIcon, roles: ['Admin', 'BaseCommander', 'LogisticsOfficer'] },
     { name: 'Purchases', href: '/purchases', icon: ShoppingCartIcon, roles: ['Admin', 'BaseCommander', 'LogisticsOfficer'] },
     { name: 'Assignments', href: '/assignments', icon: UserGroupIcon, roles: ['Admin', 'BaseCommander'] },

@@ -1,0 +1,92 @@
+node_modules/@types/react/index.d.ts(41,53): error TS2307: Cannot find module 'scheduler/tracing' or its corresponding type declarations.
+node_modules/formik/dist/connect.d.ts(2,8): error TS1259: Module '"C:/Users/gangadharan/Desktop/.CODE/tasks/MMS/test/military-asset-management-frontend/node_modules/@types/hoist-non-react-statics/index"' can only be default-imported using the 'esModuleInterop' flag
+node_modules/next/dist/client/with-router.d.ts(1,8): error TS1259: Module '"C:/Users/gangadharan/Desktop/.CODE/tasks/MMS/test/military-asset-management-frontend/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+node_modules/next/dist/server/render.d.ts(14,8): error TS1259: Module '"C:/Users/gangadharan/Desktop/.CODE/tasks/MMS/test/military-asset-management-frontend/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+node_modules/next/dist/shared/lib/head.d.ts(1,8): error TS1259: Module '"C:/Users/gangadharan/Desktop/.CODE/tasks/MMS/test/military-asset-management-frontend/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+node_modules/next/types/index.d.ts(10,8): error TS1259: Module '"C:/Users/gangadharan/Desktop/.CODE/tasks/MMS/test/military-asset-management-frontend/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+src/pages/assignments/new.tsx(7,25): error TS2307: Cannot find module '@/contexts/AuthContext' or its corresponding type declarations.
+src/pages/assignments/new.tsx(8,30): error TS2307: Cannot find module '@/services/assetService' or its corresponding type declarations.
+src/pages/assignments/new.tsx(9,35): error TS2307: Cannot find module '@/services/assignmentService' or its corresponding type declarations.
+src/pages/assignments/new.tsx(10,38): error TS2307: Cannot find module '@/stores/notificationStore' or its corresponding type declarations.
+src/pages/assignments/new.tsx(11,27): error TS2307: Cannot find module '@/components/ui/LoadingScreen' or its corresponding type declarations.
+src/pages/assignments/new.tsx(13,23): error TS2307: Cannot find module '@/types/asset' or its corresponding type declarations.
+src/pages/assignments/new.tsx(14,28): error TS2307: Cannot find module '@/types/assignment' or its corresponding type declarations.
+src/pages/assignments/new.tsx(111,22): error TS2448: Block-scoped variable 'formik' used before its declaration.
+src/pages/assignments/new.tsx(115,7): error TS2322: Type 'string | string[]' is not assignable to type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/pages/assignments/new.tsx(171,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(174,5): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(175,7): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(176,9): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(179,7): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(180,9): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(182,11): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(183,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(187,15): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(189,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(193,11): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(194,13): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(195,15): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(196,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(198,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(199,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(202,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(203,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(214,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(216,27): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(222,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(228,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(229,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(232,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(233,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(244,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(246,27): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(252,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(258,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(259,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(262,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(263,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(277,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(282,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(288,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(289,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(292,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(293,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(306,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(312,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(313,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(316,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(317,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(329,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(335,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(336,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(339,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(340,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(352,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(358,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(359,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(362,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(363,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(375,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(381,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(382,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(385,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(386,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(398,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(404,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(405,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(408,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(409,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(421,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(427,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(428,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(431,21): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(432,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(445,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(451,17): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(452,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(459,19): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(465,23): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(466,25): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(467,27): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
+src/pages/assignments/new.tsx(468,27): error TS17004: Cannot use JSX unless the '--jsx' flag is provided.
